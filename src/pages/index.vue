@@ -9,7 +9,7 @@ const words = ref('')
 
 const router = useRouter()
 function go() {
-  const wordsList = words.value.split('\n')
+  const wordsList = words.value.split('\n').filter(item => item.trim())
   if (words.value)
     router.push(`train/${JSON.stringify(wordsList)}`)
 }

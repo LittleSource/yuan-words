@@ -10,7 +10,7 @@ const index = ref(0)
 const translationText = ref('')
 let translation = ''
 const url = 'https://api.dictionaryapi.dev/api/v2/entries/en/'
-const translationUrl = 'http://v.52ym.vip/?c=word&m=getsuggest&nums=1&is_need_mean=1&word='
+const translationUrl = 'http://v.52ym.vip/translate.php?c=word&m=getsuggest&nums=1&is_need_mean=1&word='
 const word = reactive({
   word: '',
   phonetic: '',
