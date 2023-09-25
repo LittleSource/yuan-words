@@ -5,8 +5,10 @@ import { NMessageProvider } from 'naive-ui'
 <template>
   <main text-center font-sans>
     <NMessageProvider>
+      <div box-border w-full p-4 text-right text-xl icon-btn @click="toggleDark()">
+        <div i-carbon-sun dark:i-carbon-moon />
+      </div>
       <RouterView />
-      <TheFooter />
     </NMessageProvider>
   </main>
 </template>

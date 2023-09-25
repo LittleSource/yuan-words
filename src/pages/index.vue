@@ -17,14 +17,9 @@ function go() {
 
 <template>
   <div class="flex flex-col items-center justify-center">
-    <div i-carbon-campsite inline-block text-center text-4xl />
-    <p>
-      <a rel="noreferrer" href="https://github.com/antfu/vitesse-lite" target="_blank">
-        Vitesse Lite
-      </a>
-    </p>
-
-    <div class="w-1/5">
+    <div i-carbon-campsite mt-10 inline-block text-center text-4xl />
+    <p>源英语</p>
+    <div class="mt-8 w-1/5">
       <NInput
         v-model:value="words"
         class="w-2/5"
@@ -35,7 +30,7 @@ function go() {
 
     <div>
       <NButton
-        class="m-3"
+        class="mt-6"
         :disabled="!words"
         @click="go"
       >
