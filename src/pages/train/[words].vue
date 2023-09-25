@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { NButton, NCard, useMessage } from 'naive-ui'
+import { NButton, NCard, NSpin, useMessage } from 'naive-ui'
 
 const props = defineProps<{ words: string }>()
 const router = useRouter()
 const message = useMessage()
 
+const loadingShow = ref(false)
 const wordsList = JSON.parse(props.words)
 const index = ref(0)
 const translationText = ref('')
@@ -19,19 +20,21 @@ const word = reactive({
 })
 
 watch(index, (newIndex) => {
-  fetch(url + wordsList[newIndex]).then((res) => {
-    res.json().then((res) => {
+  loadingShow.value = true
+  const promiseList = [fetch(url + wordsList[newIndex]), fetch(translationUrl + wordsList[newIndex])]
+  Promise.all(promiseList).then((res) => {
+    res[0].json().then((res) => {
       res = res[0]
       word.word = res.word
       word.phonetic = res.phonetic
       word.phoneticsUrl = res.phonetics.find((item: any) => item.audio).audio
       word.phoneticsUrl && playAudio(word.phoneticsUrl)
     })
-  })
-  fetch(translationUrl + wordsList[newIndex]).then((res) => {
-    res.json().then((res) => {
+    res[1].json().then((res) => {
       translation = res.message[0].paraphrase
     })
+  }).finally(() => {
+    loadingShow.value = false
   })
 }, { immediate: true })
 
@@ -41,6 +44,14 @@ function playAudio(url: string) {
   audio.play()
 }
 
+function playPhonetic() {
+  if (!word.phoneticsUrl) {
+    message.error('没有音频')
+    return
+  }
+  playAudio(word.phoneticsUrl)
+}
+
 window.addEventListener('keydown', (e) => {
   // 如果是空格
   if (e.key === ' ')
@@ -48,7 +59,8 @@ window.addEventListener('keydown', (e) => {
   // 如果是左箭头
   if (e.key === 'ArrowLeft') {
     if (index.value === 0) {
-      message.error('已经是第一个了')
+      message.info('已经跳转到最后一个单词')
+      index.value = wordsList.length - 1
       return
     }
     index.value--
@@ -57,7 +69,8 @@ window.addEventListener('keydown', (e) => {
   // 如果是右箭头
   if (e.key === 'ArrowRight') {
     if (index.value + 1 === wordsList.length) {
-      message.error('已经是最后一个了')
+      message.info('已经跳转到第一个单词')
+      index.value = 0
       return
     }
     index.value++
@@ -69,24 +82,27 @@ window.addEventListener('keydown', (e) => {
 <template>
   <div class="mt-50 h-full w-full flex flex-col items-center justify-center">
     <NCard class="h-250px w-400px">
-      <div class="h-full flex flex-col justify-center">
-        <div>
-          <div class="text-3xl font-medium" style="color: #e61e4c;">
-            {{ word.word }}
-          </div>
-          <div class="mt-3">
-            {{ word.phonetic }}
-          </div>
-          <div v-show="translationText" class="mt-5">
-            {{ translationText }}
+      <NSpin :show="loadingShow" class="h-full flex justify-center">
+        <div class="h-full flex flex-col justify-center">
+          <div>
+            <div class="text-3xl font-medium" style="color: #e61e4c;">
+              {{ word.word }}
+            </div>
+            <div class="mt-3 flex items-center justify-center">
+              {{ word.phonetic }}
+              <p class="i-carbon-volume-down-filled ml-2 cursor-pointer" @click="playPhonetic" />
+            </div>
+            <div v-show="translationText" class="mt-5">
+              {{ translationText }}
+            </div>
           </div>
         </div>
-      </div>
-      <template #action>
-        <div class="text-right">
-          {{ index + 1 }} / {{ wordsList.length }}
-        </div>
-      </template>
+        <template #action>
+          <div class="text-right">
+            {{ index + 1 }} / {{ wordsList.length }}
+          </div>
+        </template>
+      </NSpin>
     </NCard>
     <div mt-8>
       <NButton type="primary" @click="router.back()">
