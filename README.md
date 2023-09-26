@@ -8,6 +8,8 @@
 4. [x]change nginx config to match the URL path, because sometimes show 404
 5. [] ring mode and card style
 6. [] add keybord tips
+7. [] add words loacl storage
+8. [] dynamic remove words
 
 ## some feature
 

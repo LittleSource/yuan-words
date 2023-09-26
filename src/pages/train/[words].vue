@@ -23,14 +23,11 @@ watch(index, (newIndex) => {
   loadingShow.value = true
   const promiseList = [fetch(url + wordsList[newIndex]), fetch(translationUrl + wordsList[newIndex])]
   Promise.all(promiseList).then((res) => {
-    res[0].json().then((res) => {
-      res = res[0]
-      word.word = res.word
-      word.phonetic = res.phonetic
-      word.phoneticsUrl = res.phonetics.find((item: any) => item.audio)?.audio ?? ''
-    })
-    res[1].json().then((res) => {
-      word.translationText = res.message[0].paraphrase
+    Promise.all(res.map(item => item.json())).then((res) => {
+      word.word = res[0].word
+      word.phonetic = res[0].phonetic
+      word.phoneticsUrl = res[0].phonetics.find((item: any) => item.audio)?.audio ?? ''
+      word.translationText = res[1].message[0].paraphrase
     })
   }).finally(() => {
     loadingShow.value = false
@@ -44,7 +41,7 @@ window.addEventListener('keydown', (e) => {
   // 如果是左箭头
   if (e.key === 'ArrowLeft') {
     if (index.value === 0) {
-      message.info('已经跳转到最后一个单词')
+      message.info('已跳转到最后一个单词')
       index.value = wordsList.length - 1
       return
     }
@@ -53,7 +50,7 @@ window.addEventListener('keydown', (e) => {
   // 如果是右箭头
   if (e.key === 'ArrowRight') {
     if (index.value + 1 === wordsList.length) {
-      message.info('已经跳转到第一个单词')
+      message.info('已跳转到第一个单词')
       index.value = 0
       return
     }
