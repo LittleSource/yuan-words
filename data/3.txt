@@ -4,16 +4,9 @@ porter
 religion
 lawn
 pronoun
-assume
-definite
 bean
-
-whip
 powder
 flesh
-accustom
-narrate
-comfortable
 headquarters
 formula
 colleague
@@ -22,9 +15,14 @@ coinage
 hunger
 radar
 
+whip
 severe
 eager
 extensive
 continuity
 vague
 renovate
+narrate
+comfortable
+assume
+definite
